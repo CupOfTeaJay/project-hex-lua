@@ -8,9 +8,9 @@
 
 local api = {}
 
-local common = require("ph-noise.common")
-local perlin = require("ph-noise.perlin")
-local worley = require("ph-noise.worley")
+local common = require("mapgen.common")
+local perlin = require("mapgen.perlin")
+local worley = require("mapgen.worley")
 
 local func_map = {}
 func_map["perlin"] = perlin.perlin_3d

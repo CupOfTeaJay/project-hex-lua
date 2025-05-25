@@ -2,7 +2,7 @@
     Project Hex
     Copyright (c) 2024-2025 Clevermeld™ LLC
 
-    server/lua/ph-noise/worley.lua
+    lua/mapgen/worley.lua
 
     Implementation of the Worley noise algorithm.
 
@@ -11,12 +11,12 @@
 --]]
 
 ---
---- common: Common logic for ph-noise.
+--- common: Common logic for mapgen noise generation.
 --- ptable: Permutation table used for psuedo-random "feature" point
 ---         calculations.
 --- worley: The worley noise module.
 ---
-local common = require("ph-noise.common")
+local common = require("mapgen.common")
 local ptable = common.gen_ptable()
 local worley = {}
 

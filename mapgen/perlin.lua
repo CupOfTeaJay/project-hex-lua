@@ -2,7 +2,7 @@
     Project Hex
     Copyright (c) 2024-2025 Clevermeld™ LLC
 
-    server/lua/ph-noise/perlin.lua
+    lua/mapgen/perlin.lua
 
     TODO: Document.
 
@@ -15,7 +15,7 @@
 ---
 --- TODO: Document.
 ---
-local common = require("ph-noise.common")
+local common = require("mapgen.common")
 local ptable = common.gen_ptable()
 local perlin = {}
 
