@@ -23,9 +23,6 @@ wfc.node = {
         collapse = function(self)
             return self.choices[math.random(#self.choices)]
         end,
-        propagate = function(self)
-
-        end
     }
 }
 wfc.node.metatable = {
@@ -44,8 +41,7 @@ function wfc._build_nodes(template, sockets)
         nodes[row] = {}
         for col=1,#template[row] do
             local tile = bms.getc(template[row][col], "Tile")
-            local mutable = tile.biome ~= "Mountain" and tile.biome ~= "Ocean"
-            if tile and mutable then
+            if tile and wfc._is_collapsible(tile) then
                 nodes[row][col] = wfc.node.new(choices)
             else
                 nodes[row][col] = nil
@@ -65,6 +61,37 @@ function wfc._build_nodes(template, sockets)
     end
 
     return nodes
+end
+
+---
+--- Determines all tile possibilities from `sockets`.
+---
+function wfc._get_choices(sockets)
+    local choices = {}
+    for choice, _ in pairs(sockets) do
+        table.insert(choices, choice)
+    end
+    return choices
+end
+
+---
+--- Gets indices of the least entropic node.
+---
+function wfc._get_least_entropic(nodes)
+    local min = nil
+    local row = nil
+    local col = nil
+    for _row=1,#nodes do
+        for _col=1,#nodes do
+            local node = nodes[_row][_col]
+            if node and (min == nil or node.entropy < min) then
+                min = node.entropy
+                row = _row
+                col = _col
+            end
+        end
+    end
+    return row, col
 end
 
 ---
@@ -91,21 +118,28 @@ function wfc._get_neighbors(nodes, row, col)
 end
 
 ---
---- Determines all tile possibilities from `sockets`.
+--- Determines if a tile has a collapsible biome.
 ---
-function wfc._get_choices(sockets)
-    local choices = {}
-    for choice, _ in pairs(sockets) do
-        table.insert(choices, choice)
-    end
-    return choices
+function wfc._is_collapsible(tile)
+    return (
+        tile.biome ~= "Mountain" and
+        tile.biome ~= "Ocean" and
+        tile.biome ~= "Coastal"
+    )
 end
 
 ---
 --- Entry-point for Wave Function Collapse.
+--- TODO: Nucleate?
 ---
 function wfc.collapse(template, sockets)
     local nodes = wfc._build_nodes(template, sockets)
+    local row, col = wfc._get_least_entropic(nodes)
+    while row and col do
+        print(nodes[row][col])
+        nodes[row][col] = nil
+        row, col = wfc._get_least_entropic(nodes)
+    end
 end
 
 return wfc
