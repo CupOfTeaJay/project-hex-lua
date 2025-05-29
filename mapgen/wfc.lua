@@ -23,6 +23,24 @@ wfc.node = {
         collapse = function(self)
             return self.choices[math.random(#self.choices)]
         end,
+        propagate = function(self, choice, sockets)
+            -- Build a new list of compatible choices.
+            local new_choices = {}
+            for _, possibility in ipairs(self.choices) do
+                local purge = true
+                for _, compatible in pairs(sockets[possibility]) do
+                    if choice == compatible then
+                        purge = false
+                        break
+                    end
+                end
+                if not purge then
+                    table.insert(new_choices, possibility)
+                end
+            end
+            self.choices = new_choices
+            self.entropy = #new_choices
+        end,
     }
 }
 wfc.node.metatable = {
@@ -82,7 +100,7 @@ function wfc._get_least_entropic(nodes)
     local row = nil
     local col = nil
     for _row=1,#nodes do
-        for _col=1,#nodes do
+        for _col=1,#nodes[_row] do
             local node = nodes[_row][_col]
             if node and (min == nil or node.entropy < min) then
                 min = node.entropy
@@ -136,7 +154,22 @@ function wfc.collapse(template, sockets)
     local nodes = wfc._build_nodes(template, sockets)
     local row, col = wfc._get_least_entropic(nodes)
     while row and col do
-        print(nodes[row][col])
+        -- Collapse node.
+        local choice = nodes[row][col]:collapse()
+
+        -- Update Tile biome.
+        local tile = bms.getc(
+            template[row][col],
+            "Tile"
+        )
+        tile.biome = choice
+
+        -- Propagate collapse to neighbors.
+        for _, neighbor in pairs(nodes[row][col].neighbors) do
+            neighbor:propagate(choice, sockets)
+        end
+
+        -- Remove this node and Get next node.
         nodes[row][col] = nil
         row, col = wfc._get_least_entropic(nodes)
     end
