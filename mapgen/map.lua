@@ -15,10 +15,10 @@ map.offsets = {
 map.template = {
     new = function(width, height)
         local template = {}
-        for r=1,height do
-            template[r] = {}
-            for q=1,width do
-                template[r][q] = {}
+        for row=1,height do
+            template[row] = {}
+            for col=1,width do
+                template[row][col] = {}
             end
         end
         setmetatable(template, map.template.metatable)
@@ -45,11 +45,21 @@ map.template = {
             return neighbors
         end,
         get_row_col = function(self, row, col)
-            local ref = nil
-            if self[row] and self[row][col] then
-                ref = self[row][col]
+            return self[row] and self[row][col]
+        end,
+        iter = function(self)
+            local row, col = 1, 0
+            return function()
+                col = col + 1
+                if not self[row] or not self[row][col] then
+                    row = row + 1
+                    col = 1
+                    if not self[row] or not self[row][col] then
+                        return nil
+                    end
+                end
+                return row, col, self[row][col]
             end
-            return ref
         end,
     },
 }
