@@ -5,6 +5,8 @@
     TODO: Document.
 --]]
 
+local bms = require("utils.bms")
+
 local map = {}
 
 map.offsets = {
@@ -66,6 +68,15 @@ map.template = {
 map.template.metatable = {
     __index = map.template.methods
 }
+
+---
+--- TODO:
+---
+function map.row_col_to_hex_pos(row, col)
+    local r = row - 1
+    local q = col - (r // 2) - 1
+    return bms.new("HexPos", {q = q, r = r, s = -q - r})
+end
 
 return map
 
