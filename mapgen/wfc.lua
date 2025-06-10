@@ -10,6 +10,19 @@ local map = require("mapgen.map")
 
 local wfc = {}
 
+---
+--- TODO:
+---
+wfc.WaveFunction = {
+    new = function(states)
+    end,
+    methods = {
+    },
+}
+wfc.WaveFunction.metatable = {
+    __index = wfc.WaveFunction.methods,
+}
+
 function wfc._get_lowest_entropy(nodes)
     local min = nil
     local row = nil
