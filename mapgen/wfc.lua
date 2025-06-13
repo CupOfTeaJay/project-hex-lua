@@ -7,7 +7,6 @@
 
 local bms = require("utils.bms")
 local dict = require("utils.containers").dict
-local map = require("mapgen.map")
 
 local wfc = {}
 
@@ -17,8 +16,8 @@ local wfc = {}
 wfc.WaveFunction = {
     new = function(states)
         local wave_function = {dict.new({})}
-        for _, state in pairs(states) do
-            wave_function[1]:insert(state, 1.0/#states)
+        for state, prob in pairs(states) do
+            wave_function[1]:insert(state, prob)
         end
         setmetatable(wave_function, wfc.WaveFunction.metatable)
         return wave_function
@@ -41,14 +40,19 @@ wfc.WaveFunction = {
         get_entropy = function(self)
             return self[1].size
         end,
-is_collapsed = function(self)
+        is_collapsed = function(self)
             return self[1].size == 0
         end,
         propagate = function(self, choice, sockets)
+            local popped = 0.0
             for state, prob in pairs(self[1]:iter()) do
                 if sockets[choice] and not sockets[choice]:contains(state) then
                     self[1]:remove(state)
+                    popped = popped + prob
                 end
+            end
+            for state, prob in pairs(self[1]:iter()) do
+                self[1]:insert(state, prob + popped/self[1].size)
             end
         end,
     },
@@ -81,8 +85,11 @@ end
 ---
 function wfc.collapse(template, sockets)
     local row, col, ref = wfc._get_lowest_entropy(template)
+    local prev = nil
     while ref do
         local choice = ref.wave_function:collapse()
+        if not choice then choice = prev end
+        prev = choice
         bms.insc(
             ref.entity,
             "Tile",

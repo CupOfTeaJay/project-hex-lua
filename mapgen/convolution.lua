@@ -37,8 +37,10 @@ function convolution.smooth(template, passes)
                     max = frequency
                 end
             end
-            tile = bms.getc(ref.entity, "Tile")
-            tile.biome = sel
+            if (sel ~= "Mountain" and sel ~= "Coastal" and sel ~= "Ocean") then
+                tile = bms.getc(ref.entity, "Tile")
+                tile.biome = sel
+            end
         end
     end
 end
