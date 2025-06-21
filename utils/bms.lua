@@ -10,6 +10,13 @@
 local bms = {}
 
 ---
+--- Despawns the provided entity from the world.
+---
+function bms.despawn(entity)
+    world.despawn(entity)
+end
+
+---
 --- Gets a component from an entity.
 ---
 function bms.getc(entity, name)
