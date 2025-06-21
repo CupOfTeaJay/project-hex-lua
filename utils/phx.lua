@@ -11,11 +11,9 @@ local phx = {}
 
 ---
 --- TODO: Document.
+--- TODO: Better input type validation.
 ---
 function phx.spawn_unit(name, pos, player_id)
-    -- Validate arguments.
-
-    
     -- Spawn a new, empty entity into the world.
     local entity = bms.spawn()
 
