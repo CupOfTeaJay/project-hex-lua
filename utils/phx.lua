@@ -19,7 +19,7 @@ function phx.spawn_unit(name, pos, player_id)
 
     -- Insert a `Name` component into the entity. This is needed for the server
     -- to lookup additional unit information deserialized from JSON assets.
-    bms.insc(entity, "Name", {_1 = name})
+    bms.insc(entity, "Name", bms.new("Name", {name = name}))
 
     -- Insert a `HexPos` component into the entity. This determines the initial
     -- placement of the unit on the map.
@@ -37,7 +37,10 @@ function phx.spawn_unit(name, pos, player_id)
     -- Insert a `PlayerId` component into the entity. This designates who has
     -- control over the unit and ensures clients render the unit with the
     -- appropriate jersey.
-    bms.insc(entity, "PlayerId", {_1 = player_id})
+    bms.insc(entity, "PlayerId", bms.new("PlayerId", {_1 = player_id}))
+
+    -- Insert a `UnitMarker` component onto the entity.
+    bms.insc(entity, "UnitMarker", bms.new("UnitMarker", {}))
 end
 
 return phx
