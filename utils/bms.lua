@@ -45,7 +45,12 @@ end
 --- Constructs a new instance of a registered type.
 ---
 function bms.new(name, data)
-    return construct(world.get_type_by_name(name), data)
+    -- TODO: Remove if we can construct `Name` in lua.
+    if name == "Name" then
+        return Name.new(data.name)
+    else
+        return construct(world.get_type_by_name(name), data)
+    end
 end
 
 ---
