@@ -10,6 +10,13 @@
 local bms = {}
 
 ---
+--- Inserts children into an entity
+---
+function bms.pushc(entity, children)
+    world.push_children(entity, children)
+end
+
+---
 --- Despawns the provided entity from the world.
 ---
 function bms.despawn(entity)
@@ -48,6 +55,8 @@ function bms.new(name, data)
     -- TODO: Remove if we can construct `Name` in lua.
     if name == "Name" then
         return Name.new(data.name)
+    elseif name == "Node" then
+        return Node.new()
     else
         return construct(world.get_type_by_name(name), data)
     end
@@ -56,10 +65,18 @@ end
 ---
 --- Queries the world for the given components.
 ---
-function bms.query(names)
+function bms.query(names, withs, withouts)
+    withs = withs or {}
+    withouts = withouts or {}
     local query = world.query()
     for _, name in pairs(names) do
         query = query:component(world.get_type_by_name(name))
+    end
+    for _, with in pairs(withs) do
+        query = query:with(world.get_type_by_name(with))
+    end
+    for _, without in pairs(withouts) do
+        query = query:without(world.get_type_by_name(without))
     end
     return query:build()
 end
