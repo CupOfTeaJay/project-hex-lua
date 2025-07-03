@@ -24,6 +24,13 @@ function bms.despawn(entity)
 end
 
 ---
+--- Despawns the provided entity's descendants from the world.
+---
+function bms.despawn_descendants(entity)
+    world.despawn_descendants(entity)
+end
+
+---
 --- Gets a component from an entity.
 ---
 function bms.getc(entity, name)

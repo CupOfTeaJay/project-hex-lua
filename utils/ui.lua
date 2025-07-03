@@ -21,6 +21,24 @@ end
 ---
 --- TODO:
 ---
+function ui.node(t)
+    local node = Node.new() ---@diagnostic disable-line:undefined-global
+    for k, v in pairs(t) do
+        node[k] = v
+    end
+    return node
+end
+
+---
+--- TODO:
+---
+function ui.text(text)
+    return bms.new("Text", {_1 = text})
+end
+
+---
+--- TODO:
+---
 function ui.ui_rect(left, right, top, bottom)
     return bms.new(
         "UiRect",
